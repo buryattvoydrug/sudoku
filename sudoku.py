@@ -37,37 +37,13 @@ def group(values: tp.List[T], n: int) -> tp.List[tp.List[T]]:
     for i in range(1, n+1):
         a.append(values[b*(i-1):b*i:])
     return a
-    # """
-    # Сгруппировать значения values в список, состоящий из списков по n элементов
-    # >>> group([1,2,3,4], 2)
-    # [[1, 2], [3, 4]]
-    # >>> group([1,2,3,4,5,6,7,8,9], 3)
-    # [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
-    # """
 
 
 def get_row(grid: tp.List[tp.List[str]], pos: tp.Tuple[int, int]) -> tp.List[str]:
-    # """Возвращает все значения для номера строки, указанной в pos
-    # >>> get_row([['1', '2', '.'], ['4', '5', '6'], ['7', '8', '9']], (0, 0))
-    # ['1', '2', '.']
-    # >>> get_row([['1', '2', '3'], ['4', '.', '6'], ['7', '8', '9']], (1, 0))
-    # ['4', '.', '6']
-    # >>> get_row([['1', '2', '3'], ['4', '5', '6'], ['.', '8', '9']], (2, 0))
-    # ['.', '8', '9']
-    # """
     return grid[pos[0]]
 
 
 def get_col(grid: tp.List[tp.List[str]], pos: tp.Tuple[int, int]) -> tp.List[str]:
-    # """Возвращает все значения для номера столбца, указанного в pos
-    # >>> get_col([['1', '2', '.'], ['4', '5', '6'], ['7', '8', '9']], (0, 0))
-    # ['1', '4', '7']
-    # >>> get_col([['1', '2', '3'], ['4', '.', '6'], ['7', '8', '9']], (0, 1))
-    # ['2', '.', '8']
-    # >>> get_col([['1', '2', '3'], ['4', '5', '6'], ['.', '8', '9']], (0, 2))
-    # ['3', '6', '9']
-    # """
-    # pass
     a = []
     for i in range(0, len(grid)):
         a.append(grid[i][pos[1]])
@@ -75,15 +51,6 @@ def get_col(grid: tp.List[tp.List[str]], pos: tp.Tuple[int, int]) -> tp.List[str
 
 
 def get_block(grid: tp.List[tp.List[str]], pos: tp.Tuple[int, int]) -> tp.List[str]:
-    """Возвращает все значения из квадрата, в который попадает позиция pos
-    >>> grid = read_sudoku('puzzle1.txt')
-    >>> get_block(grid, (0, 1))
-    ['5', '3', '.', '6', '.', '.', '.', '9', '8']
-    >>> get_block(grid, (4, 7))
-    ['.', '.', '3', '.', '.', '1', '.', '.', '6']
-    >>> get_block(grid, (8, 8))
-    ['2', '8', '.', '.', '.', '5', '.', '7', '9']
-    """
     pos_x_0 = (pos[0]//3)*3
     pos_y_0 = (pos[1]//3)*3
     a = []
@@ -94,30 +61,13 @@ def get_block(grid: tp.List[tp.List[str]], pos: tp.Tuple[int, int]) -> tp.List[s
 
 
 def find_empty_positions(grid: tp.List[tp.List[str]]) -> tp.Optional[tp.Tuple[int, int]]:
-    """Найти первую свободную позицию в пазле
-    >>> find_empty_positions([['1', '2', '.'], ['4', '5', '6'], ['7', '8', '9']])
-    (0, 2)
-    >>> find_empty_positions([['1', '2', '3'], ['4', '.', '6'], ['7', '8', '9']])
-    (1, 1)
-    >>> find_empty_positions([['1', '2', '3'], ['4', '5', '6'], ['.', '8', '9']])
-    (2, 0)
-    """
-    for i in len(grid):
-        for j in len(grid[i]):
+    for i in range(len(grid)):
+        for j in range(len(grid[i])):
             if(grid[i][j] == '.'):
                 return (i, j)
 
 
 def find_possible_values(grid: tp.List[tp.List[str]], pos: tp.Tuple[int, int]) -> tp.Set[str]:
-    """Вернуть множество возможных значения для указанной позиции
-    >>> grid = read_sudoku('puzzle1.txt')
-    >>> values = find_possible_values(grid, (0,2))
-    >>> values == {'1', '2', '4'}
-    True
-    >>> values = find_possible_values(grid, (4,7))
-    >>> values == {'2', '5', '9'}
-    True
-    """
     values = set(str(i) for i in range(1, 10))
     values = values - set(get_row(grid, pos))
     values = values - set(get_col(grid, pos))
@@ -126,18 +76,18 @@ def find_possible_values(grid: tp.List[tp.List[str]], pos: tp.Tuple[int, int]) -
 
 
 def solve(grid: tp.List[tp.List[str]]) -> tp.Optional[tp.List[tp.List[str]]]:
-    """ Решение пазла, заданного в grid """
-    """ Как решать Судоку?
-        1. Найти свободную позицию
-        2. Найти все возможные значения, которые могут находиться на этой позиции
-        3. Для каждого возможного значения:
-            3.1. Поместить это значение на эту позицию
-            3.2. Продолжить решать оставшуюся часть пазла
-    >>> grid = read_sudoku('puzzle1.txt')
-    >>> solve(grid)
-    [['5', '3', '4', '6', '7', '8', '9', '1', '2'], ['6', '7', '2', '1', '9', '5', '3', '4', '8'], ['1', '9', '8', '3', '4', '2', '5', '6', '7'], ['8', '5', '9', '7', '6', '1', '4', '2', '3'], ['4', '2', '6', '8', '5', '3', '7', '9', '1'], ['7', '1', '3', '9', '2', '4', '8', '5', '6'], ['9', '6', '1', '5', '3', '7', '2', '8', '4'], ['2', '8', '7', '4', '1', '9', '6', '3', '5'], ['3', '4', '5', '2', '8', '6', '1', '7', '9']]
-    """
-    pass
+    emptypositions = find_empty_positions(grid)
+    if(not emptypositions):
+        return grid
+    else:
+        row, col = emptypositions
+    for i in range(1, 10):
+        if(str(i) in find_possible_values(grid, (row, col))):
+            grid[row][col] = str(i)
+            if(solve(grid)):
+                return grid
+            grid[row][col] = '.'
+    return False
 
 
 def check_solution(solution: tp.List[tp.List[str]]) -> bool:
