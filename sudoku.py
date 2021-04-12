@@ -5,7 +5,6 @@ T = tp.TypeVar("T")
 
 
 def read_sudoku(path: tp.Union[str, pathlib.Path]) -> tp.List[tp.List[str]]:
-    """ Прочитать Судоку из указанного файла """
     path = pathlib.Path(path)
     with path.open() as f:
         puzzle = f.read()
@@ -19,7 +18,6 @@ def create_grid(puzzle: str) -> tp.List[tp.List[str]]:
 
 
 def display(grid: tp.List[tp.List[str]]) -> None:
-    """Вывод Судоку """
     width = 2
     line = "+".join(["-" * (width * 3)] * 3)
     for row in range(9):
@@ -34,11 +32,11 @@ def display(grid: tp.List[tp.List[str]]) -> None:
 
 
 def group(values: tp.List[T], n: int) -> tp.List[tp.List[T]]:
-  b=len(values)//n
-  a=[]
-  for i in range(1,n+1):
-    a.append(values[b*(i-1):b*i:])
-  return a
+    b = len(values)//n
+    a = []
+    for i in range(1, n+1):
+        a.append(values[b*(i-1):b*i:])
+    return a
     # """
     # Сгруппировать значения values в список, состоящий из списков по n элементов
     # >>> group([1,2,3,4], 2)
@@ -59,6 +57,7 @@ def get_row(grid: tp.List[tp.List[str]], pos: tp.Tuple[int, int]) -> tp.List[str
     # """
     return grid[pos[0]]
 
+
 def get_col(grid: tp.List[tp.List[str]], pos: tp.Tuple[int, int]) -> tp.List[str]:
     # """Возвращает все значения для номера столбца, указанного в pos
     # >>> get_col([['1', '2', '.'], ['4', '5', '6'], ['7', '8', '9']], (0, 0))
@@ -69,9 +68,9 @@ def get_col(grid: tp.List[tp.List[str]], pos: tp.Tuple[int, int]) -> tp.List[str
     # ['3', '6', '9']
     # """
     # pass
-    a=[]
-    for i in range(0,len(grid)):
-      a.append(grid[i][pos[1]])
+    a = []
+    for i in range(0, len(grid)):
+        a.append(grid[i][pos[1]])
     return a
 
 
@@ -85,7 +84,13 @@ def get_block(grid: tp.List[tp.List[str]], pos: tp.Tuple[int, int]) -> tp.List[s
     >>> get_block(grid, (8, 8))
     ['2', '8', '.', '.', '.', '5', '.', '7', '9']
     """
-    pass
+    pos_x_0 = (pos[0]//3)*3
+    pos_y_0 = (pos[1]//3)*3
+    a = []
+    for i in range(3):
+        for j in range(3):
+            a.append(grid[pos_x_0+i][pos_y_0+j])
+    return a
 
 
 def find_empty_positions(grid: tp.List[tp.List[str]]) -> tp.Optional[tp.Tuple[int, int]]:
@@ -97,7 +102,10 @@ def find_empty_positions(grid: tp.List[tp.List[str]]) -> tp.Optional[tp.Tuple[in
     >>> find_empty_positions([['1', '2', '3'], ['4', '5', '6'], ['.', '8', '9']])
     (2, 0)
     """
-    pass
+    for i in len(grid):
+        for j in len(grid[i]):
+            if(grid[i][j] == '.'):
+                return (i, j)
 
 
 def find_possible_values(grid: tp.List[tp.List[str]], pos: tp.Tuple[int, int]) -> tp.Set[str]:
@@ -110,7 +118,11 @@ def find_possible_values(grid: tp.List[tp.List[str]], pos: tp.Tuple[int, int]) -
     >>> values == {'2', '5', '9'}
     True
     """
-    pass
+    values = set(str(i) for i in range(1, 10))
+    values = values - set(get_row(grid, pos))
+    values = values - set(get_col(grid, pos))
+    values = values - set(get_block(grid, pos))
+    return values
 
 
 def solve(grid: tp.List[tp.List[str]]) -> tp.Optional[tp.List[tp.List[str]]]:
