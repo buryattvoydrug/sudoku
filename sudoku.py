@@ -1,6 +1,6 @@
 import pathlib
 import typing as tp
-from random import sample
+import random
 
 T = tp.TypeVar("T")
 
@@ -93,7 +93,6 @@ def solve(grid: tp.List[tp.List[str]]) -> tp.Optional[tp.List[tp.List[str]]]:
 
 def check_solution(solution: tp.List[tp.List[str]]) -> bool:
     """ Если решение solution верно, то вернуть True, в противном случае False """
-    # TODO: Add doctests with bad puzzles
     for i in solution:
         if sorted(list(set(i))) != sorted(i):
             return False
@@ -108,6 +107,11 @@ def check_solution(solution: tp.List[tp.List[str]]) -> bool:
             return False
         columns = []
     return True
+
+
+def is_valid(grid, rowPosition, colPosition, value):
+    c = find_possible_values(grid, (rowPosition, colPosition))
+    return not c.isdisjoint(list(str(value)))
 
 
 def generate_sudoku(N: int) -> tp.List[tp.List[str]]:
@@ -131,8 +135,19 @@ def generate_sudoku(N: int) -> tp.List[tp.List[str]]:
     >>> check_solution(solution)
     True
     """
-
-    return None
+    if(N > 81):
+        N = 81
+    grid = [['.' for i in range(9)] for y in range(9)]
+    for i in range(0, N):
+        rowPosition = random.randrange(9)
+        colPosition = random.randrange(9)
+        value = random.randrange(1, 10)
+        while (not is_valid(grid, rowPosition, colPosition, value) or grid[rowPosition][colPosition] != "."):
+            rowPosition = random.randrange(9)
+            colPosition = random.randrange(9)
+            value = random.randrange(1, 10)
+        grid[rowPosition][colPosition] = str(value)
+    return grid
 
 
 if __name__ == "__main__":
